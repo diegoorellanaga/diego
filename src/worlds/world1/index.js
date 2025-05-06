@@ -3,7 +3,7 @@
 import { Mesh } from '@babylonjs/core';
 import { configureWorldCamera } from '../../utils/LightAndCamera';
 import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader';
-import { Vector3,StandardMaterial,MeshBuilder,CubeTexture,Texture, Color3,VertexBuffer,Material,TransformNode,Color4, Matrix,VideoTexture } from '@babylonjs/core';
+import { Vector3,StandardMaterial,MeshBuilder,CubeTexture,Texture, Color3,VertexBuffer,Material,TransformNode,Color4, Matrix,VideoTexture,ExecuteCodeAction,ActionManager } from '@babylonjs/core';
 import '@babylonjs/loaders/glTF'; // Import GLTF loader
 import { FallingCubes } from './objects/FallingCubes';
 import { FallingPanels } from './objects/FallingPanels';
@@ -105,6 +105,8 @@ class World1 {
         this.loadTable()
         this.loadPilar()
         this.loadMonitor()
+        this.loadPen()
+        this.loadPlant()
   
       } catch (error) {
         console.error("World2 setup failed:", error);
@@ -229,6 +231,173 @@ async loadPilar() {
   }
 }
 
+async loadPen() {
+  try {
+      // Load the table model
+      const result = await SceneLoader.ImportMeshAsync(
+          "", 
+          "assets/models/", 
+          "pen.glb", 
+          this.scene
+      );
+
+      this.pen = result.meshes[0];
+      
+      // Scale the table up (adjust these values as needed)
+      this.pen.scaling = new Vector3(0.7, 0.7, 0.7);
+      
+      // Position the table lower on the Y axis
+      this.pen.position.x = -5; // Adjust this value to set how much lower
+      
+
+
+  // 2. Create visible bounding box (we'll make it invisible later)
+  const boundingBox = this.pen.getBoundingInfo().boundingBox;
+  const cubeSize = boundingBox.maximum.subtract(boundingBox.minimum);
+  
+  this.penTrigger = MeshBuilder.CreateBox("penTrigger", {
+      width: cubeSize.x,
+      height: cubeSize.y,
+      depth: cubeSize.z
+  }, this.scene);
+  
+  // 3. Position and parent it to the pen
+  this.penTrigger.position = boundingBox.center.add(new Vector3(1.5, 0, 0));
+  this.penTrigger.parent = this.pen;
+  this.penTrigger.scaling = new Vector3(1, 1, 5);
+
+  this.penTrigger.rotation.y = -Math.PI/6;
+
+  // 4. Make it semi-transparent red for debugging (remove later)
+  const debugMat = new StandardMaterial("debugMat", this.scene);
+  debugMat.diffuseColor = new Color3(1, 0, 0);
+  debugMat.alpha = 0.0;
+  this.penTrigger.material = debugMat;
+
+
+  // IMPORTANT: Pass only the root mesh, not the entire array
+  this.enablePenClick(this.penTrigger);
+
+
+
+
+
+
+      this.meshes.push(...result.meshes);
+      
+  } catch (error) {
+      console.error("Failed to load pen:", error);
+      throw error;
+  }
+}
+
+async loadPlant() {
+  try {
+      // Load the plant model
+      const result = await SceneLoader.ImportMeshAsync(
+          "", 
+          "assets/models/", 
+          "plant.glb", 
+          this.scene
+      );
+
+      this.plant = result.meshes[0];
+      this.plant.scaling = new Vector3(0.7, 0.7, 0.7);
+      this.plant.position.x = -2;
+      this.plant.position.z = 5;
+      this.plant.position.y = -0.7;
+      // Add custom property to identify this object type
+      this.plant.objectType = "plant";
+      
+
+
+      // 2. Create visible bounding box (we'll make it invisible later)
+      const boundingBox = this.plant.getBoundingInfo().boundingBox;
+      const cubeSize = boundingBox.maximum.subtract(boundingBox.minimum);
+      
+      this.plantTrigger = MeshBuilder.CreateBox("plantTrigger", {
+          width: cubeSize.x,
+          height: cubeSize.y,
+          depth: cubeSize.z
+      }, this.scene);
+      
+      // 3. Position and parent it to the plant
+      this.plantTrigger.position = boundingBox.center.add(new Vector3(0, 2, 0));
+      this.plantTrigger.parent = this.plant;
+      this.plantTrigger.scaling = new Vector3(2, 2, 2);
+      // 4. Make it semi-transparent red for debugging (remove later)
+      const debugMat = new StandardMaterial("debugMat", this.scene);
+      debugMat.diffuseColor = new Color3(1, 0, 0);
+      debugMat.alpha = 0.0;
+      this.plantTrigger.material = debugMat;
+
+
+      // IMPORTANT: Pass only the root mesh, not the entire array
+      this.enablePlantClick(this.plantTrigger);
+
+      this.meshes.push(...result.meshes);
+      
+  } catch (error) {
+      console.error("Failed to load plant:", error);
+      throw error;
+  }
+}
+
+enablePlantClick(plant) {
+    if (!this.scene.actionManager) {
+        this.scene.actionManager = new ActionManager(this.scene);
+    }
+    
+    // Ensure we're working with a single mesh
+    if (!plant.actionManager) {
+        plant.actionManager = new ActionManager(this.scene);
+    }
+    
+    plant.actionManager.registerAction(
+        new ExecuteCodeAction(
+            ActionManager.OnPickTrigger,
+            (evt) => {
+                console.log("Plant clicked!"); // Debug log
+                window.open("https://diegoorellanaga.github.io/plants/", "_blank");
+            }
+        )
+    );
+    
+    plant.isPickable = true;
+    
+    // For GLB models with child meshes, make sure all children are pickable too
+    plant.getChildMeshes().forEach(child => {
+        child.isPickable = true;
+    });
+}
+
+enablePenClick(pen) {
+  if (!this.scene.actionManager) {
+      this.scene.actionManager = new ActionManager(this.scene);
+  }
+  
+  // Ensure we're working with a single mesh
+  if (!pen.actionManager) {
+    pen.actionManager = new ActionManager(this.scene);
+  }
+  
+  pen.actionManager.registerAction(
+      new ExecuteCodeAction(
+          ActionManager.OnPickTrigger,
+          (evt) => {
+              console.log("CVForgeExpo clicked!"); // Debug log
+              window.open("https://diegoorellanaga.github.io/CVForgeExpo/", "_blank");
+          }
+      )
+  );
+  
+  pen.isPickable = true;
+  
+  // For GLB models with child meshes, make sure all children are pickable too
+  pen.getChildMeshes().forEach(child => {
+      child.isPickable = true;
+  });
+}
 
 async loadMonitor() {
   try {

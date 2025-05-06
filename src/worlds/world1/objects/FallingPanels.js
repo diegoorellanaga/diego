@@ -14,18 +14,6 @@ export class FallingPanels {
             minSpeed: 0.22         // When to stop completely
         };
 
-        // // Create shared material with texture
-        // this.panelMaterial = new StandardMaterial("panelMaterial", this.scene);
-        // const texturePaths = [
-        //     process.env.PUBLIC_URL + "/assets/images/resume2.png", 
-        //     process.env.PUBLIC_URL + "/assets/images/reference1.png", 
-        //                  // If in same directory
-        // ];
-        
-        // // // Test each path until one works
-        //  this.panelMaterial.diffuseTexture = new Texture(texturePaths[0], this.scene);
-        // // this.panelMaterial.specularColor = new Vector3(0.1, 0.1, 0.1);
-
         this.panelTypes = {
             RESUME: {
                 id: 1,
@@ -50,8 +38,6 @@ export class FallingPanels {
             }
         };
 
-
-
     }
 
         // Class method to get random panel type
@@ -74,50 +60,7 @@ export class FallingPanels {
             return weightedTypes[Math.floor(Math.random() * weightedTypes.length)];
         }
 
-    // createPanel(options = {}) { //Plane.002 -> Plane.004
-    //     // Thin box dimensions (like a book)
-    //     const width = options.width || 0.2;
-    //     const height = options.height || 3;
-    //     const depth = options.depth || 2.0;
-        
-    //     const panel = MeshBuilder.CreateBox("panel", { 
-    //         width, 
-    //         height, 
-    //         depth,
-    //         faceUV: this.getFaceUVOptions()  
-    //     }, this.scene);
 
-    //     panel.material = this.panelMaterial;
-        
-    //     // Starting position (above ground)
-    //     panel.position = new Vector3(
-    //        5+ (Math.random() - 0.5) * 10,
-    //         25 + Math.random() * 5,
-    //         (Math.random() - 0.5) * 10
-    //     );
-        
-    //     // Initial velocity - slight horizontal movement
-    //     panel.velocity = new Vector3(
-    //         (Math.random() - 0.5) * 0.3,  // Gentle X push
-    //         -0.2,                         // Downward push
-    //         (Math.random() - 0.5) * 0.3   // Gentle Z push
-    //     );
-        
-    //     // Physics properties
-    //     panel.physics = {
-    //         angularVelocity: new Vector3(
-    //             (Math.random() - 0.5) * 0.2,  // Initial rotation X
-    //             (Math.random() - 0.5) * 0.1,  // Rotation Y
-    //             (Math.random() - 0.5) * 0.2   // Rotation Z
-    //         ),
-    //         isResting: false,
-    //         dimensions: new Vector3(width, height, depth)
-    //     };
-    //     this.enablePanelClick(panel);
-    //     this.panels.push(panel);
-    //     return panel;
-    // }
-    
 
     createPanel(options = {}) {
         // Default to random type if not specified
@@ -146,10 +89,6 @@ export class FallingPanels {
      const panelMaterial = new StandardMaterial(`panelMaterial-${panelType.id}`, this.scene);
      panelMaterial.diffuseTexture = texture;
      
-     // These settings help with visibility:
-   //  panelMaterial.specularColor = new Color3(0, 0, 0); // Remove shininess
-  //   panelMaterial.emissiveColor = new Color3(0.5, 0.5, 0.5); // Add self-illumination
-   //  panelMaterial.disableLighting = true; // Make it fully visible regardless of scene lights
      
      panel.material = panelMaterial;
         
@@ -186,28 +125,7 @@ export class FallingPanels {
         return panel;
     }
 
-    // enablePanelClick(panel) {
-    //     // Initialize action manager if it doesn't exist
-    //     if (!this.scene.actionManager) {
-    //         this.scene.actionManager = new ActionManager(this.scene);
-    //     }
-        
-    //     panel.actionManager = new ActionManager(this.scene);
-        
-    //     panel.actionManager.registerAction(
-    //         new ExecuteCodeAction(
-    //             ActionManager.OnPickTrigger,
-    //             (evt) => {
-    //                 if (this.onClickCallback ) {
-    //                     this.onClickCallback(panel, evt);
-    //                 }
-    //             }
-    //         )
-    //     );
-        
-    //     // Make sure the panel is pickable
-    //     panel.isPickable = true;
-    // }
+
 
     enablePanelClick(panel) {
         if (!this.scene.actionManager) {
