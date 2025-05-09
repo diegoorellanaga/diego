@@ -119,7 +119,7 @@ class World1 {
         // Load the GLB file
         const result = await SceneLoader.ImportMeshAsync(
             "", 
-            "assets/models/", 
+            process.env.PUBLIC_URL +"/assets/models/", 
             "sky.glb", 
             this.scene
         );
@@ -150,7 +150,7 @@ async loadTable() {
       // Load the table model
       const result = await SceneLoader.ImportMeshAsync(
           "", 
-          "assets/models/", 
+          process.env.PUBLIC_URL +"/assets/models/", 
           "table.glb", 
           this.scene
       );
@@ -209,7 +209,7 @@ async loadPilar() {
       // Load the table model
       const result = await SceneLoader.ImportMeshAsync(
           "", 
-          "assets/models/", 
+          process.env.PUBLIC_URL +"/assets/models/", 
           "onepilar.glb", 
           this.scene
       );
@@ -236,7 +236,7 @@ async loadPen() {
       // Load the table model
       const result = await SceneLoader.ImportMeshAsync(
           "", 
-          "assets/models/", 
+          process.env.PUBLIC_URL +"/assets/models/", 
           "pen.glb", 
           this.scene
       );
@@ -296,7 +296,7 @@ async loadPlant() {
       // Load the plant model
       const result = await SceneLoader.ImportMeshAsync(
           "", 
-          "assets/models/", 
+          process.env.PUBLIC_URL +"/assets/models/", 
           "plant.glb", 
           this.scene
       );
@@ -404,7 +404,7 @@ async loadMonitor() {
       // Load monitor with center pivot
       const result = await SceneLoader.ImportMeshAsync(
           "", 
-          "assets/models/", 
+          process.env.PUBLIC_URL +"/assets/models/", 
           "monitor.glb", 
           this.scene,
           undefined,

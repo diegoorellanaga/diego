@@ -20,7 +20,7 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-
+//  "homepage": "https://diegoorellanaga.github.io/diego/",
 function App() {
   return (
     <div className="game-container">

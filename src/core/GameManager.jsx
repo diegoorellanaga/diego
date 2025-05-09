@@ -18,30 +18,33 @@ const GameManager = () => {
   const currentLevel = useRef(1);
   const gameLoopRunning = useRef(false);
 
+  const loadingDiv = useRef(null);
+
   // Add debug logs at key points
   console.log('GameManager rendering');
 
   const loadLevel = async (level) => {
     console.log(`Loading level ${level}`);
     try {
+
+      engineRef.current.loadingScreen.displayLoadingUI()
+
+      await new Promise(resolve => setTimeout(resolve, 0));
+
       await worldManager.current.loadWorld(level);
       await characterManager.current.spawnPlayer(level); // If spawnPlayer is async
       startGameLoop();
+
     } catch (error) {
+      //engineRef.current.loadingScreen.hideLoadingUI();
       console.error('Level loading failed:', error);
+    }finally {
+      // This will be called automatically when render loop resumes
+      // But we call it here to be safe
+      engineRef.current.loadingScreen.hideLoadingUI();
+      //engineRef.current.hideLoadingUI();
     }
   };
-
-//   const loadLevelSelect = async (level) => {
-//     console.log(`Loading level ${level}`);
-//     try {
-//       await worldManager.current.loadWorld(level);
-//       await characterManager.current.spawnPlayer(); // If spawnPlayer is async
-//     } catch (error) {
-//       console.error('Level loading failed:', error);
-//     }
-//   };
-
 
   const startGameLoop = () => {
 
@@ -81,6 +84,69 @@ const GameManager = () => {
         // Initialize engine and scene
         engineRef.current = new Engine(canvasRef.current, true);
         sceneRef.current = new Scene(engineRef.current);
+
+
+        // engineRef.current.loadingScreen.displayLoadingUI = () => {
+        //   const div = document.createElement("div");
+        //   div.textContent = "🛸 Loading Diego's Website...";
+        //   div.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;background:#000;color:white;display:flex;justify-content:center;align-items:center;`;
+        //   document.body.appendChild(div);
+        //  // this._loadingDiv = div;
+        //  loadingDiv.current = div;
+        // };
+
+
+        engineRef.current.loadingScreen.displayLoadingUI = () => {
+          loadingDiv.current = document.createElement("div");
+          loadingDiv.current.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+          `;
+          
+          // Create GIF element
+          const gif = document.createElement("img");
+          gif.src = process.env.PUBLIC_URL +"/assets/images/loading.gif";
+          gif.style.cssText = `
+          width: 20vw;           /* 10% of viewport width */
+          height: 20vw;          /* Maintain square ratio */
+          max-width: 200px;      /* Prevent becoming too large */
+          max-height: 200px;     /* Prevent becoming too large */
+          min-width: 120px;       /* Prevent becoming too small */
+          min-height: 120px;      /* Prevent becoming too small */
+          object-fit: contain;   /* Maintain aspect ratio */
+          margin-bottom: 2vh;    /* Relative to viewport height */
+        `;
+          
+          // Create loading text
+          const text = document.createElement("div");
+          text.textContent = "Diego Orellana...";
+          text.style.cssText = `
+            color: white;
+            font-size: 18px;
+          `;
+          
+          // Append elements
+          loadingDiv.current.appendChild(gif);
+          loadingDiv.current.appendChild(text);
+          document.body.appendChild(loadingDiv.current);
+        };
+
+  
+        engineRef.current.loadingScreen.hideLoadingUI = () => {
+        //  this._loadingDiv?.remove();
+        setTimeout(()=>{loadingDiv.current.remove()},2000)
+        
+        };
+
         
         console.log('Engine and scene created');
 
