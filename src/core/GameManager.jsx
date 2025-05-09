@@ -33,6 +33,7 @@ const GameManager = () => {
 
       await worldManager.current.loadWorld(level);
       await characterManager.current.spawnPlayer(level); // If spawnPlayer is async
+      
       startGameLoop();
 
     } catch (error) {

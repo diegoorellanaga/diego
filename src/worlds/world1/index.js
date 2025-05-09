@@ -237,7 +237,7 @@ async loadPen() {
       const result = await SceneLoader.ImportMeshAsync(
           "", 
           process.env.PUBLIC_URL +"/assets/models/", 
-          "pen.glb", 
+          "pen_2.glb", 
           this.scene
       );
 
@@ -297,7 +297,7 @@ async loadPlant() {
       const result = await SceneLoader.ImportMeshAsync(
           "", 
           process.env.PUBLIC_URL +"/assets/models/", 
-          "plant.glb", 
+          "plant_2.glb", 
           this.scene
       );
 
@@ -405,7 +405,7 @@ async loadMonitor() {
       const result = await SceneLoader.ImportMeshAsync(
           "", 
           process.env.PUBLIC_URL +"/assets/models/", 
-          "monitor.glb", 
+          "monitor_2.glb", 
           this.scene,
           undefined,
           undefined,
